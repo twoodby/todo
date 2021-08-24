@@ -1,0 +1,43 @@
+# https://taskfile.dev
+version: '3'
+
+
+tasks:
+  setup:
+    cmds:
+      - cmd: echo "Project Setup -> Started"
+      - cp "./.kt/prepare-commit-msg" "./.git/hooks/prepare-commit-msg"
+      - chmod +x "./.git/hooks/prepare-commit-msg"
+      - cmd: echo "Project Setup -> Git Hooks Setup "
+      - cmd: echo "Project Setup -> Finished"
+    silent: true
+
+  checkRepo:
+    cmds:
+      - task: :utils:confirmGit
+      - task: :utils:remoteDiff
+      # - task: :utils:repoNotDirty
+
+  confirmGit: # Check that git is available from the cl
+    vars:
+      MSG_NO_GIT: \nGIT is required for development on this app. \nPlease check the wiki on what to do. \nAborting.\n
+    cmds:
+      - cmd: command -v git >/dev/null 2>&1 || { echo -e >&2 "{{ .MSG_NO_GIT }}"; exit 1; }
+    silent: true
+
+  repoNotDirty:
+    vars:
+      MSG_DIRTY: Your current branch is dirty and so we can not continue.
+    cmds:
+      - cmd:  git diff --quiet || (echo -e "\n{{.MSG_DIRTY}}\n"; exit 1;)
+    silent: true
+
+  remoteDiff: # Checks if the current state of the branch is the same as remote
+    vars:
+      MSG_REMOTE_DIFF: Local and Remote are different please fix and try again
+    cmds:
+      - cmd: git remote update && if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then echo -e "\n{{.MSG_REMOTE_DIFF}}\n"; exit 1; fi
+    silent: true
+
+
+

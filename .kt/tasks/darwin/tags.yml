@@ -1,0 +1,29 @@
+# https://taskfile.dev
+version: '3'
+
+tasks:
+  new:
+    desc: Create a new tag with description.
+    deps: 
+      - task: :utils:checkRepo
+    vars:
+      NEW_VERSION:
+        sh: echo "$(if git describe --abbrev=0 --tags > /dev/null 2>&1; then git describe --abbrev=0 --tags; else echo ""; fi)" | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{$NF=sprintf("%0*d", length($NF), ($NF+1)); print}'
+    cmds:
+    - |
+      printf 'New Tag Number [{{.NEW_VERSION}}]: ' && read VERSION_NUM
+      VERSION_NUM="${VERSION_NUM:-{{.NEW_VERSION}}}"
+      [[ $VERSION_NUM != {{.TAG_PREFIX}}* ]] && VERSION_NUM="{{.TAG_PREFIX}}$VERSION_NUM"
+      printf 'Message: ' && read VERSION_MSG
+      git tag -m "$VERSION_MSG" $VERSION_NUM
+    silent: true
+
+  list:
+    desc: List current tags with message.
+    deps:
+      - task: :utils:confirmGit
+    cmds:
+      - cmd: printf "\nCurrent Tags\nTag             Message\n"
+      - cmd: git tag -n99
+      - cmd: printf "\n"
+    silent: true

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# -----------------------------------------------------------------------
+# Prepare Commit Message Git Hook                                  [v1.0]
+# -----------------------------------------------------------------------
+# This is used to enforce a consistent commit message pattern 
+#
+
+# Pull current message from file
+MESSAGE=$(cat $1)
+
+# Get Branch Name and split
+brName=$(git rev-parse --abbrev-ref HEAD)
+IFS='/' read -ra brNameArray <<< "$brName"
+
+# Get Slug Type
+cSlugType="Z"
+if [ "${#brNameArray[@]}" -gt "1" ]; then
+    cSlugType=$(echo $brNameArray[1] | head -c 1)
+    cSlugType=$(echo "$cSlugType"|awk '{print toupper($0)}')
+fi
+
+# Build Slug Based Off Type
+prefix=""
+case $cSlugType in
+    I|P)
+        IFS='-' read -ra ticNameArray <<< "${brNameArray[1]}"
+        printf -v cId "%03g" "${ticNameArray[0]}"
+        prefix="[$cSlugType$cId] "
+        ;;
+    R) 
+        cId=$(echo ${brNameArray[1]} | sed 's/[A-Za-z]*//g')
+        prefix="[$cSlugType$cId] "
+        ;; 
+esac
+
+# Set Message back to file
+echo "$prefix$MESSAGE" > $1

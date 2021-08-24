@@ -1,0 +1,27 @@
+# https://taskfile.dev
+version: '3'
+
+vars:
+  BRANCH_PREFIX_RELEASE: release/
+  BRANCH_PREFIX_PROJECT: project/
+  BRANCH_PREFIX_ISSUE: issue/
+  BRANCH_PRODUCTION: distributed
+
+includes:
+  branch: ./.kt/tasks/{{OS}}/branching.yml
+  tags: ./.kt/tasks/{{OS}}/tags.yml
+  utils: ./.kt/tasks/{{OS}}/utils.yml
+
+  
+tasks:
+
+  setup:
+    desc: Setup project for development
+    cmds:
+      - task: utils:setup
+    silent: true
+
+  default:
+    cmds:
+      - task -l
+    silent: true
