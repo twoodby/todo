@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ToDo</string>
+    <string name="edit_hint">Task Name</string>
+    <string name="important_task">Important Task</string>
 </resources>
