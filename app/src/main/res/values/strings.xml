@@ -2,4 +2,10 @@
     <string name="app_name">ToDo</string>
     <string name="edit_hint">Task Name</string>
     <string name="important_task">Important Task</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_sort">Sort List</string>
+    <string name="menu_sort_by_name">Sort By Name</string>
+    <string name="menu_sort_by_date_created">Sort By Date</string>
+    <string name="menu_hide_completed">Hide Completed</string>
+    <string name="menu_delete_completed">Delete Completed</string>
 </resources>
