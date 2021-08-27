@@ -1,7 +1,7 @@
 package com.twoodby.todo.repository.room.task
 
 import androidx.room.*
-import com.twoodby.todo.ui.taskslist.SortOrder
+import com.twoodby.todo.repository.SortOrder
 import kotlinx.coroutines.flow.Flow
 
 @Dao
