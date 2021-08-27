@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.twoodby.todo.repository.PreferenceManager
 import com.twoodby.todo.repository.SortOrder
+import com.twoodby.todo.repository.room.task.Task
 import com.twoodby.todo.repository.room.task.TaskDao
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -29,6 +30,14 @@ constructor (
         Pair(query, filterPreferences)
     }.flatMapLatest { (query, filterPreferences) ->
         taskDao.getTasks(query, filterPreferences.sortOrder, filterPreferences.hideCompleted)
+    }
+
+    fun onTaskSelected(task: Task) = viewModelScope.launch {
+
+    }
+
+    fun onTaskCheckedChanged(task: Task, isChecked: Boolean) = viewModelScope.launch {
+        taskDao.update(task.copy(completed = isChecked))
     }
 
     fun  onSortOrderSelected(sortOrder: SortOrder) = viewModelScope.launch {
