@@ -8,4 +8,6 @@
     <string name="menu_sort_by_date_created">Sort By Date</string>
     <string name="menu_hide_completed">Hide Completed</string>
     <string name="menu_delete_completed">Delete Completed</string>
+    <string name="task_deleted_snack_bar">Task Deleted</string>
+    <string name="task_deleted_action_text">Undo</string>
 </resources>
