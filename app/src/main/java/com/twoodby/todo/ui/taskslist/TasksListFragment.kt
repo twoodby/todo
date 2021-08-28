@@ -9,6 +9,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ import com.twoodby.todo.R
 import com.twoodby.todo.databinding.FragmentTasksBinding
 import com.twoodby.todo.repository.SortOrder
 import com.twoodby.todo.repository.room.task.Task
+import com.twoodby.todo.ui.MainActivity
 import com.twoodby.todo.util.extends.onQueryTextChanged
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -56,6 +58,9 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks), TasksListAdapter.On
                 }
             }).attachToRecyclerView(recyclerViewTasks)
 
+            fapAddTask.setOnClickListener {
+                viewModel.onAddNewTaskClick()
+            }
 
         }
 
@@ -72,11 +77,26 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks), TasksListAdapter.On
                                 viewModel.onUndoDeleteClicked(event.task)
                             }.show()
                     }
+
+                    is TasksListViewModel.TasksEvent.NavigateToAddTaskScreen -> {
+                        val action = TasksListFragmentDirections.actionTasksListFragmentToTaskFragment(title = getString(R.string.TitleAddTask))
+                        findNavController().navigate(action)
+                    }
+
+                    is TasksListViewModel.TasksEvent.NavigateToEditTaskScreen -> {
+                        val action = TasksListFragmentDirections.actionTasksListFragmentToTaskFragment(task = event.task, title = getString(R.string.TitleNewTask))
+                        findNavController().navigate(action)
+                    }
                 }
             }
         }
 
         setHasOptionsMenu(true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as MainActivity).supportActionBar?.title = getString(R.string.TitleTaskList)
     }
 
     override fun onItemClick(task: Task) {

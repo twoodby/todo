@@ -10,4 +10,8 @@
     <string name="menu_delete_completed">Delete Completed</string>
     <string name="task_deleted_snack_bar">Task Deleted</string>
     <string name="task_deleted_action_text">Undo</string>
+    <string name="taskDate">Created %s</string>
+    <string name="TitleAddTask">Add Task</string>
+    <string name="TitleNewTask">Edit Task</string>
+    <string name="TitleTaskList">Tasks</string>
 </resources>

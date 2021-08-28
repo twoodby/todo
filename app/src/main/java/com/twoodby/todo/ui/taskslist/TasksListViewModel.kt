@@ -1,9 +1,8 @@
 package com.twoodby.todo.ui.taskslist
 
+import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.twoodby.todo.repository.PreferenceManager
 import com.twoodby.todo.repository.SortOrder
 import com.twoodby.todo.repository.room.task.Task
@@ -19,17 +18,19 @@ class TasksListViewModel
 @ViewModelInject
 constructor (
     private val taskDao: TaskDao,
-    private val preferenceManager: PreferenceManager
+    private val preferenceManager: PreferenceManager,
+    @Assisted private val state: SavedStateHandle
 ): ViewModel() {
     // Search Data
-    val searchQuery = MutableStateFlow("")
+
+    val searchQuery = state.getLiveData("searchQuery", "")
     val preferenceFlow = preferenceManager.preferenceFlow
 
     private val tasksEventChannel = Channel<TasksEvent>()
     val tasksEvent = tasksEventChannel.receiveAsFlow()
 
     private val taskFlow = combine(
-        searchQuery,
+        searchQuery.asFlow(),
         preferenceFlow
     ){query, filterPreferences   ->
         Pair(query, filterPreferences)
@@ -38,7 +39,7 @@ constructor (
     }
 
     fun onTaskSelected(task: Task) = viewModelScope.launch {
-
+        tasksEventChannel.send(TasksEvent.NavigateToEditTaskScreen(task))
     }
 
     fun onTaskCheckedChanged(task: Task, isChecked: Boolean) = viewModelScope.launch {
@@ -62,10 +63,17 @@ constructor (
         taskDao.insert(task)
     }
 
+    fun onAddNewTaskClick() = viewModelScope.launch {
+        tasksEventChannel.send(TasksEvent.NavigateToAddTaskScreen)
+    }
+
+
     val tasks = taskFlow.asLiveData()
 
 
     sealed class TasksEvent {
+        object NavigateToAddTaskScreen: TasksEvent()
+        data class NavigateToEditTaskScreen(val task: Task): TasksEvent()
         data class ShowUndoDeleteTask(val task: Task): TasksEvent()
     }
 }
