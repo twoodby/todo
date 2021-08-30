@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -64,6 +65,11 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks), TasksListAdapter.On
 
         }
 
+        setFragmentResultListener("addRequestFragment") { _, bundle ->
+            var result = bundle.getInt("add_edit_results")
+            viewModel.onAddEditResult(result)
+        }
+
         viewModel.tasks.observe(viewLifecycleOwner ) {
             taskAdapter.submitList(it)
         }
@@ -87,6 +93,8 @@ class TasksListFragment : Fragment(R.layout.fragment_tasks), TasksListAdapter.On
                         val action = TasksListFragmentDirections.actionTasksListFragmentToTaskFragment(task = event.task, title = getString(R.string.TitleNewTask))
                         findNavController().navigate(action)
                     }
+                    is TasksListViewModel.TasksEvent.ShowSnackBar ->
+                        Snackbar.make(requireView(), getString(event.msgId), Snackbar.LENGTH_LONG).show()
                 }
             }
         }

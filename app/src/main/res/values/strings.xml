@@ -14,4 +14,7 @@
     <string name="TitleAddTask">Add Task</string>
     <string name="TitleNewTask">Edit Task</string>
     <string name="TitleTaskList">Tasks</string>
+    <string name="error_empty_name">Name cannot be empty</string>
+    <string name="message_task_updated">Task was updated</string>
+    <string name="message_task_inserted">Task Saved</string>
 </resources>

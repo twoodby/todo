@@ -67,6 +67,12 @@ constructor (
         tasksEventChannel.send(TasksEvent.NavigateToAddTaskScreen)
     }
 
+    fun onAddEditResult(result: Int) {
+        viewModelScope.launch {
+            tasksEventChannel.send(TasksEvent.ShowSnackBar(result))
+        }
+    }
+
 
     val tasks = taskFlow.asLiveData()
 
@@ -75,6 +81,7 @@ constructor (
         object NavigateToAddTaskScreen: TasksEvent()
         data class NavigateToEditTaskScreen(val task: Task): TasksEvent()
         data class ShowUndoDeleteTask(val task: Task): TasksEvent()
+        data class ShowSnackBar(val msgId: Int) : TasksEvent()
     }
 }
 
